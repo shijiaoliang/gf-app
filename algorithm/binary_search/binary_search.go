@@ -1,9 +1,5 @@
 package binary_search
 
-import (
-	"fmt"
-)
-
 func binarySearch(slice []int, target int, l, r int) int {
 	if l > r {
 		return -1
@@ -40,7 +36,3 @@ func binarySearch2(slice []int, target int, l, r int) int {
 	}
 }
 
-func main() {
-	a := []int{10, 20, 30, 31, 45}
-	fmt.Println(binarySearch2(a, 31, 0, len(a)-1))
-}
