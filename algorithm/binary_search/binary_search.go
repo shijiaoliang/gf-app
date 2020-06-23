@@ -1,3 +1,4 @@
+// Package binary_search
 package binary_search
 
 func binarySearch(slice []int, target int, l, r int) int {
@@ -35,4 +36,3 @@ func binarySearch2(slice []int, target int, l, r int) int {
 		}
 	}
 }
-
