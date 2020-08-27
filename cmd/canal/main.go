@@ -1,8 +1,21 @@
+/**
+ *******************************************51cto********************************************
+ * Copyright (c)  www.51cto.com
+ * Created by 51canal.
+ * User: shijl@51cto.com
+ * Date: 2020/08/27
+ * Time: 11:18
+ ********************************************************************************************
+ */
+
 package main
 
 import (
 	"fmt"
+	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/os/glog"
 	"github.com/siddontang/go-mysql/canal"
+	"github.com/siddontang/go-mysql/mysql"
 )
 
 type MyEventHandler struct {
@@ -19,25 +32,39 @@ func (h *MyEventHandler) String() string {
 }
 
 func main() {
+	//cfg
 	cfg := canal.NewDefaultConfig()
-	cfg.Addr = "rm-2zejg15af6d9b2r9y.mysql.rds.aliyuncs.com:3306"
-	cfg.User = "admin_root"
-	cfg.Password = "Y0yeWjaAqkLZIb8xH9xt"
+	cfg.Addr = g.Cfg().GetString("source.Addr")
+	cfg.User = g.Cfg().GetString("source.User")
+	cfg.Password = g.Cfg().GetString("source.Password")
 	cfg.Dump.ExecutionPath = ""
+	cfg.IncludeTableRegex = g.Cfg().GetStrings("source.IncludeTableRegex")
 
-	cfg.IncludeTableRegex = []string{"edu_ceping\\.admin", "edu_ceping\\.app"}
-
+	//canal
 	c, _ := canal.NewCanal(cfg)
 	c.SetEventHandler(&MyEventHandler{})
 
-	//startPos := mysql.Position{
-	//	Name: "mysql-bin.002473",
-	//	Pos:  uint32(1436044),
-	//}
-	startPos, err := c.GetMasterPos()
+	//startPos
+	var startPos mysql.Position
+	var err error
+	startPosName := g.Cfg().GetString("source.startPos.Name")
+	startPosPos := g.Cfg().GetUint32("source.startPos.Pos")
+	if startPosName != "" && startPosPos > 0 {
+		startPos = mysql.Position{
+			Name: startPosName,
+			Pos:  startPosPos,
+		}
+	} else {
+		startPos, err = c.GetMasterPos()
+		if err != nil {
+			glog.Printf("getMasterPos err %v", err)
+			return
+		}
+	}
 
+	//run
 	err = c.RunFrom(startPos)
 	if err != nil {
-		fmt.Printf("start canal err %v", err)
+		glog.Printf("start 51canal err %v", err)
 	}
 }

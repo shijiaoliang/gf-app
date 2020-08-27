@@ -1,0 +1,26 @@
+#Sourse Database
+[source]
+    Addr = "rm-2zejg15af6d9b2r9y.mysql.rds.aliyuncs.com:3306"
+    User = "admin_root"
+    Password = "Y0yeWjaAqkLZIb8xH9xt"
+    IncludeTableRegex = [
+        "edu_ceping\\.admin",
+        "edu_ceping\\.app"
+    ]
+    [source.startPos]
+        Name = ""
+        Pos = 0
+
+# HTTP Server
+[server]
+	Address     = ":9090"
+	ServerRoot  = "public"
+	ServerAgent = "51canal"
+	LogPath     = "./tmp/log/server"
+	AccessLogEnabled = true
+
+# Logger
+[logger]
+    Path        = "./tmp/log"
+    Level       = "all"
+    Stdout      = true
