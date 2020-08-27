@@ -1,3 +1,9 @@
+# Logger
+[logger]
+    Path        = "/data/site_log/51cto.com/canal/log"
+    Level       = "DEV" #DEV | PROD
+    Stdout      = true
+
 #Sourse Database
 [source]
     Addr = "rm-2zejg15af6d9b2r9y.mysql.rds.aliyuncs.com:3306"
@@ -10,17 +16,3 @@
     [source.startPos]
         Name = ""
         Pos = 0
-
-# HTTP Server
-[server]
-	Address     = ":9090"
-	ServerRoot  = "public"
-	ServerAgent = "51canal"
-	LogPath     = "./tmp/log/server"
-	AccessLogEnabled = true
-
-# Logger
-[logger]
-    Path        = "./tmp/log"
-    Level       = "all"
-    Stdout      = true

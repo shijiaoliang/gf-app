@@ -11,9 +11,7 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/os/glog"
 	"github.com/siddontang/go-mysql/canal"
 	"github.com/siddontang/go-mysql/mysql"
 )
@@ -23,7 +21,7 @@ type MyEventHandler struct {
 }
 
 func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
-	fmt.Println(e)
+	g.Log().Info(e)
 	return nil
 }
 
@@ -57,7 +55,7 @@ func main() {
 	} else {
 		startPos, err = c.GetMasterPos()
 		if err != nil {
-			glog.Printf("getMasterPos err %v", err)
+			g.Log().Printf("getMasterPos err %v", err)
 			return
 		}
 	}
@@ -65,6 +63,6 @@ func main() {
 	//run
 	err = c.RunFrom(startPos)
 	if err != nil {
-		glog.Printf("start 51canal err %v", err)
+		g.Log().Printf("start 51canal err %v", err)
 	}
 }
