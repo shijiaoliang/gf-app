@@ -16,12 +16,33 @@ import (
 	"github.com/siddontang/go-mysql/mysql"
 )
 
+type eventData struct {
+	Database string
+	Table    string
+	Action   string
+	PkValue  []interface{}
+	Rows     [][]interface{}
+}
+
 type MyEventHandler struct {
 	canal.DummyEventHandler
 }
 
 func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
-	g.Log().Info(e)
+	pkValueData, err := e.Table.GetPKValues(e.Rows[0])
+	if err != nil {
+		g.Log().Error(err)
+	}
+
+	ed := &eventData{
+		Database: e.Table.Schema,
+		Table:    e.Table.Name,
+		Action:   e.Action,
+		PkValue:  pkValueData,
+		Rows:     e.Rows,
+	}
+
+	g.Log().Info(ed)
 	return nil
 }
 
