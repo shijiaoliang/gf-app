@@ -20,7 +20,7 @@ type eventData struct {
 	Database string
 	Table    string
 	Action   string
-	PkValue  []interface{}
+	PkValues []interface{}
 	Rows     [][]interface{}
 }
 
@@ -29,16 +29,21 @@ type MyEventHandler struct {
 }
 
 func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
-	pkValueData, err := e.Table.GetPKValues(e.Rows[0])
-	if err != nil {
-		g.Log().Error(err)
+	var pkValues []interface{}
+	for i, item := range e.Rows {
+		if e.Action == "update" && i%2 == 0 {
+			continue
+		}
+
+		pkValue, _ := e.Table.GetPKValues(item)
+		pkValues = append(pkValues, pkValue[0])
 	}
 
 	ed := &eventData{
 		Database: e.Table.Schema,
 		Table:    e.Table.Name,
 		Action:   e.Action,
-		PkValue:  pkValueData,
+		PkValues: pkValues,
 		Rows:     e.Rows,
 	}
 
