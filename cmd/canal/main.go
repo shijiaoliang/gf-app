@@ -3,7 +3,7 @@
  * Copyright (c)  www.51cto.com
  * Created by 51canal.
  * User: shijl@51cto.com
- * Date: 2020/08/27
+ * Date: 2020/09/01
  * Time: 11:18
  ********************************************************************************************
  */
@@ -11,10 +11,23 @@
 package main
 
 import (
+	"time"
 	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/os/grpool"
 	"github.com/siddontang/go-mysql/canal"
 	"github.com/siddontang/go-mysql/mysql"
 )
+
+var httpClient *ghttp.Client
+
+func init() {
+	//100毫秒超时
+	httpClient = ghttp.NewClient().SetTimeout(100 * time.Millisecond)
+
+	//log
+	g.Log().SetAsync(true)
+}
 
 type eventData struct {
 	Database string
@@ -24,11 +37,11 @@ type eventData struct {
 	Rows     [][]interface{}
 }
 
-type MyEventHandler struct {
+type myEventHandler struct {
 	canal.DummyEventHandler
 }
 
-func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
+func (h *myEventHandler) OnRow(e *canal.RowsEvent) error {
 	var pkValues []interface{}
 	for i, item := range e.Rows {
 		if e.Action == "update" && i%2 == 0 {
@@ -47,12 +60,22 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 		Rows:     e.Rows,
 	}
 
+	//log ed
 	g.Log().Info(ed)
+
+	//协程池复用-http通知
+	grpool.Add(func() {
+		urls := g.Cfg().GetStrings("notify.Urls")
+		for _, url := range urls {
+			httpClient.PostContent(url, ed)
+		}
+	})
+
 	return nil
 }
 
-func (h *MyEventHandler) String() string {
-	return "MyEventHandler"
+func (h *myEventHandler) String() string {
+	return "myEventHandler"
 }
 
 func main() {
@@ -66,7 +89,7 @@ func main() {
 
 	//canal
 	c, _ := canal.NewCanal(cfg)
-	c.SetEventHandler(&MyEventHandler{})
+	c.SetEventHandler(&myEventHandler{})
 
 	//startPos
 	var startPos mysql.Position

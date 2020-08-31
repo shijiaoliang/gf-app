@@ -2,7 +2,7 @@
 [logger]
     Path        = "/data/site_log/51cto.com/canal/log"
     Level       = "DEV" #DEV | PROD
-    Stdout      = true
+    Stdout      = true  #false
 
 #Sourse Database
 [source]
@@ -10,9 +10,12 @@
     User = "admin_root"
     Password = "Y0yeWjaAqkLZIb8xH9xt"
     IncludeTableRegex = [
-        "edu_ceping\\.admin",
-        "edu_ceping\\.app"
+        "edu_center\\.course",
     ]
     [source.startPos]
         Name = ""
         Pos = 0
+
+#Notify
+[notify]
+    Urls = ["http://linetest.b.edu.51cto.com/site/test/index"]
