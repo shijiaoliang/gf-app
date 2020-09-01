@@ -30,11 +30,11 @@ func init() {
 }
 
 type eventData struct {
-	Database string
-	Table    string
-	Action   string
-	PkValues []interface{}
-	Rows     [][]interface{}
+	Database string          `json:"database"`
+	Table    string          `json:"table"`
+	Action   string          `json:"action"`
+	PkValues []interface{}   `json:"pk_values"`
+	Rows     [][]interface{} `json:"rows"`
 }
 
 type myEventHandler struct {
