@@ -23,7 +23,7 @@ var httpClient *ghttp.Client
 
 func init() {
 	//100毫秒超时
-	httpClient = ghttp.NewClient().SetTimeout(100 * time.Millisecond)
+	httpClient = ghttp.NewClient().SetTimeout(100 * time.Millisecond).SetContentType("application/json")
 
 	//log
 	g.Log().SetAsync(true)
